@@ -18,7 +18,8 @@ export default function Main({onEditProfile, onEditAvatar, onAddPlace, onCardCli
         setUserAvatar(dataUser.avatar)
         dataCard.forEach(data => dataUser.myid = dataUser._id)
         setCards(dataCard)
-})
+      })
+      .catch((error) => console.error(`Ошибка: ${error}`))
   },[])
 
     return (

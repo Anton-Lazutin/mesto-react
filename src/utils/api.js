@@ -15,7 +15,8 @@ class Api {
             authorization: this._authorization,
         }
         })
-        .then(this._checkResponse);
+        .then(this._checkResponse)
+        .catch((error) => console.error(`Ошибка: ${error}`))
     }
 
     getCards() {
@@ -24,7 +25,8 @@ class Api {
             authorization: this._authorization,
         }
         })
-        .then(this._checkResponse);
+        .then(this._checkResponse)
+        .catch((error) => console.error(`Ошибка: ${error}`))
     }
 
     setUserInfo(data) {
@@ -36,7 +38,8 @@ class Api {
             about: data.hobby,
         })
         })
-        .then(this._checkResponse);
+        .then(this._checkResponse)
+        .catch((error) => console.error(`Ошибка: ${error}`))
     }
 
     setUserAvatar(data) {
@@ -47,7 +50,8 @@ class Api {
         avatar: data.avatar,
         })
         })
-        .then(this._checkResponse);
+        .then(this._checkResponse)
+        .catch((error) => console.error(`Ошибка: ${error}`))
     }
 
     addCard(data) {
@@ -59,7 +63,8 @@ class Api {
             link: data.link,
         })
         })
-        .then(this._checkResponse);
+        .then(this._checkResponse)
+        .catch((error) => console.error(`Ошибка: ${error}`))
     }
 
     addLike(cardId) {
@@ -69,7 +74,8 @@ class Api {
             authorization: this._authorization,
         }
         })
-        .then(this._checkResponse);
+        .then(this._checkResponse)
+        .catch((error) => console.error(`Ошибка: ${error}`))
     }
 
     deleteLike(cardId) {
@@ -79,7 +85,8 @@ class Api {
         authorization: this._authorization,
         }
         })
-        .then(this._checkResponse);
+        .then(this._checkResponse)
+        .catch((error) => console.error(`Ошибка: ${error}`))
     }
 
     deleteCard(cardId) {
@@ -89,7 +96,8 @@ class Api {
         authorization: this._authorization,
         }
         })
-        .then(this._checkResponse);
+        .then(this._checkResponse)
+        .catch((error) => console.error(`Ошибка: ${error}`))
         }
     }
 
