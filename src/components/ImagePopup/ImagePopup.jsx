@@ -1,6 +1,6 @@
 export default function ImagePopup({card, isOpen, onClose}) {
     return (
-        <section className={`popup popup_photo ${isOpen && 'popup_opened'}`}>
+        <section className={`popup popup_photo ${isOpen && 'popup_opened'}`} onClick={onClose}>
         <div className="popup__wrapper">
           <img 
             className="popup__big-photo"

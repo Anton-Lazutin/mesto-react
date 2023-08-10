@@ -4,7 +4,7 @@ import api from '../../utils/api'
 import Card from '../Card/Card.jsx'
 import { useEffect, useState } from 'react'
 
-export default function Main({onEditProfile, onEditAvatar, onAddPlace, onCardClick}) {
+export default function Main({onEditProfile, onEditAvatar, onAddPlace, onCardClick, onDelete}) {
   const [userName, setUserName] = useState('')
   const [userDescription, setUserDescription] = useState('')
   const [userAvatar, setUserAvatar] = useState('')
@@ -55,7 +55,7 @@ export default function Main({onEditProfile, onEditAvatar, onAddPlace, onCardCli
           {cards.map(data => {
             return (
               <article className="card" key = {data._id}>
-                <Card card={data} onCardClick = {onCardClick}/>
+                <Card card={data} onCardClick = {onCardClick} onDelete={onDelete}/>
               </article>
             )
           })}

@@ -10,31 +10,60 @@ function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false)
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false)
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false)
-  const [selectedCard, setSelectedCard] = useState({})
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false)
   const [isImagePopup, setImagePopup] = useState(false)
+  const [selectedCard, setSelectedCard] = useState({})
+
+  function closePopupByEsc(evt) {
+    if (evt.key === 'Escape') {
+      closeAllpopups()
+      document.removeEventListener('keydown', closePopupByEsc)
+    }
+  }
+
+  function setEventListenerForDocument() {
+    document.addEventListener('keydown', closePopupByEsc)
+  }
 
   function closeAllpopups() {
     setIsEditProfilePopupOpen(false)
     setIsEditAvatarPopupOpen(false)
     setIsAddPlacePopupOpen(false)
     setImagePopup(false)
+    setIsDeletePopupOpen(false)
   }
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true)
+    setEventListenerForDocument()
   }
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true)
+    setEventListenerForDocument()
   }
 
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true)
+    setEventListenerForDocument()
   }
 
   function handleCardClick(card) {
     setSelectedCard(card)
     setImagePopup(true)
+    setEventListenerForDocument()
+  }
+
+  function handleDeleteCardClick() {
+    setIsDeletePopupOpen(true)
+    setEventListenerForDocument()
+  }
+
+  function closePopupsByBtnAndOverlay(evt) {
+    if (evt.target === evt.currentTarget) {
+      closeAllpopups()
+      document.removeEventListener('keydown', closePopupByEsc)
+    }
   }
 
   return (
@@ -48,6 +77,7 @@ function App() {
       onEditAvatar = {handleEditAvatarClick}
       onAddPlace = {handleAddPlaceClick}
       onCardClick = {handleCardClick}
+      onDelete = {handleDeleteCardClick}
     />
 
     <Footer/>
@@ -56,7 +86,7 @@ function App() {
       name = 'edit-form'
       title = 'Редактировать профиль'
       isOpen = {isEditProfilePopupOpen}
-      onClose = {closeAllpopups}
+      onClose = {closePopupsByBtnAndOverlay}
     >
       <input
           type="text"
@@ -87,7 +117,7 @@ function App() {
       title = 'Новое место'
       titleButton = 'Создать'
       isOpen = {isAddPlacePopupOpen}
-      onClose = {closeAllpopups}
+      onClose = {closePopupsByBtnAndOverlay}
     >
       <input
           type="text"
@@ -115,7 +145,7 @@ function App() {
       name = 'edit-avatar'
       title = 'Обновоить аватар'
       isOpen = {isEditAvatarPopupOpen}
-      onClose = {closeAllpopups}
+      onClose = {closePopupsByBtnAndOverlay}
     >
       <input
           type="url"
@@ -132,12 +162,14 @@ function App() {
       name = 'delete'
       title = 'Вы уверены?'
       titleButton = 'Да'
+      isOpen = {isDeletePopupOpen}
+      onClose = {closePopupsByBtnAndOverlay}
     />
 
     <ImagePopup
     card = {selectedCard}
     isOpen = {isImagePopup}
-    onClose = {closeAllpopups}
+    onClose = {closePopupsByBtnAndOverlay}
     />
 
   </div>
