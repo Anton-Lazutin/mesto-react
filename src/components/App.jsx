@@ -3,34 +3,51 @@ import Main from './Main/Main.jsx';
 import Footer from './Footer/Footer.jsx';
 import PopupWithForm from "./PopupWithForm/PopupWithForm.jsx";
 import ImagePopup from "./ImagePopup/ImagePopup.jsx";
-import { useState } from "react";
+import { useCallback, useState, useEffect } from "react";
+import CurrentUserContext from '../contexts/CurrentUserContext.js'
+import api from '../utils/api.js'
+import EditProfilePopup from "./EditProfilePopup/EditProfilePopup.jsx";
+import EditAvatarPopup from "./EditAvatarPopup/EditAvatarPopup.jsx";
+import AddPlacePopup from "./AddPlacePopup/AddPlacePopup.jsx";
 
 function App() {
-
+// state popups
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false)
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false)
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false)
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false)
   const [isImagePopup, setImagePopup] = useState(false)
   const [selectedCard, setSelectedCard] = useState({})
+  const [isLoaderMessage, setIsLoaderMessage] = useState(false)
+// state context
+  const [currentUser, setCurrentUser] = useState({})
+//state cards
+  const [cards, setCards] = useState([])
+  const [isLoadingCards, setIsLoadingCards] = useState(true)
+  const [deleteCardId, setDeleteCardId] =useState('')
 
-  function closePopupByEsc(evt) {
-    if (evt.key === 'Escape') {
-      closeAllpopups()
-      document.removeEventListener('keydown', closePopupByEsc)
-    }
-  }
-
-  function setEventListenerForDocument() {
-    document.addEventListener('keydown', closePopupByEsc)
-  }
-
-  function closeAllpopups() {
+  const setAllStatesForClosePopups = useCallback (() => {
     setIsEditProfilePopupOpen(false)
     setIsEditAvatarPopupOpen(false)
     setIsAddPlacePopupOpen(false)
     setImagePopup(false)
     setIsDeletePopupOpen(false)
+  },[])
+
+  const closePopupByEsc = useCallback ((evt) => { 
+    if (evt.key === 'Escape') {
+      setAllStatesForClosePopups()
+      document.removeEventListener('keydown', closePopupByEsc)
+    }
+  },[setAllStatesForClosePopups])
+
+  const closeAllPopups = useCallback (() => {
+    setAllStatesForClosePopups()
+    document.removeEventListener('keydown', closePopupByEsc)
+  },[setAllStatesForClosePopups, closePopupByEsc])
+
+  function setEventListenerForDocument() {
+    document.addEventListener('keydown', closePopupByEsc)
   }
 
   function handleEditProfileClick() {
@@ -54,19 +71,80 @@ function App() {
     setEventListenerForDocument()
   }
 
-  function handleDeleteCardClick() {
+  function handleDeleteCardClick(cardId) {
+    setDeleteCardId(cardId)
     setIsDeletePopupOpen(true)
     setEventListenerForDocument()
   }
 
-  function closePopupsByBtnAndOverlay(evt) {
-    if (evt.target === evt.currentTarget) {
-      closeAllpopups()
-      document.removeEventListener('keydown', closePopupByEsc)
-    }
+  useEffect(() => {
+    setIsLoadingCards(true)
+    Promise.all([api.getInfo(), api.getCards()])
+      .then(([dataUser, dataCard]) => {
+        setCurrentUser(dataUser)
+        setCards(dataCard)
+        setIsLoadingCards(false)
+      })
+      .catch((error) => console.error(`Ошибка: ${error}`))
+  },[])
+
+  function handleDeleteSubmit(evt) {
+    evt.preventDefault()
+    setIsLoaderMessage(true)
+    api.deleteCard(deleteCardId)
+      .then(() => {
+        setCards(cards.filter(card => {
+          return card._id !== deleteCardId
+        }))
+        closeAllPopups()
+        setIsLoaderMessage(false)
+      })
+      .catch((error) => console.error(`Ошибка: ${error}`))
+      .finnaly(() => setIsLoaderMessage(false))
+  }
+
+  function handleUpdateUser(dataUser, reset) {
+    setIsLoaderMessage(true)
+    api.setUserInfo(dataUser)
+      .then(res => {
+        setCurrentUser(res)
+        closeAllPopups()
+        reset()
+        setIsLoaderMessage(false)
+      })
+      .catch((error) => console.error(`Ошибка: ${error}`))
+      .finnaly(() => setIsLoaderMessage(false))
+  } 
+
+  function handleUpdateAvatar(dataUser, reset) {
+    setIsLoaderMessage(true)
+    api.setUserAvatar(dataUser)
+      .then(res => {
+        setCurrentUser(res)
+        closeAllPopups()
+        reset()
+        setIsLoaderMessage(false)
+      })
+      .catch((error) => console.error(`Ошибка: ${error}`))
+      .finnaly(() => setIsLoaderMessage(false))
+  }
+
+  function handleAddPlaceSubmit(dataCard, reset) {
+    setIsLoaderMessage(true)
+    api.addCard(dataCard)
+      .then(res => {
+        setCards([res, ...cards])
+        closeAllPopups()
+        reset()
+        setIsLoaderMessage(false)
+      })
+      .catch((error) => console.error(`Ошибка: ${error}`))
+      .finnaly(() => setIsLoaderMessage(false))
   }
 
   return (
+  <CurrentUserContext.Provider value={currentUser}>
+
     <div className="page__content">
     <div className="page">
 
@@ -78,103 +156,53 @@ function App() {
       onAddPlace = {handleAddPlaceClick}
       onCardClick = {handleCardClick}
       onDelete = {handleDeleteCardClick}
+      cards = {cards}
+      isLoading = {isLoadingCards}
     />
 
     <Footer/>
 
-    <PopupWithForm 
-      name = 'edit-form'
-      title = 'Редактировать профиль'
+    <EditProfilePopup
       isOpen = {isEditProfilePopupOpen}
-      onClose = {closePopupsByBtnAndOverlay}
-    >
-      <input
-          type="text"
-          required=""
-          minLength={2}
-          maxLength={40}
-          className="popup__input popup__input_type_name"
-          name="username"
-          placeholder="Введите имя"
-          id="name"
-      />
-      <span id="error-name" className="popup__error-message" />
-      <input
-          type="text"
-          required=""
-          minLength={2}
-          maxLength={200}
-          className="popup__input popup__input_type_hobby"
-          name="hobby"
-          placeholder="О себе"
-          id="hobby"
-      />
-      <span id="error-hobby" className="popup__error-message" />
-    </PopupWithForm>
+      onClose = {closeAllPopups}
+      onUpdateUser = {handleUpdateUser}
+      isLoaderMessage = {isLoaderMessage}
+    />
 
-    <PopupWithForm 
-      name = 'add-form'
-      title = 'Новое место'
-      titleButton = 'Создать'
+    <AddPlacePopup
       isOpen = {isAddPlacePopupOpen}
-      onClose = {closePopupsByBtnAndOverlay}
-    >
-      <input
-          type="text"
-          required=""
-          minLength={2}
-          maxLength={30}
-          className="popup__input popup__input_type_place"
-          name="place"
-          placeholder="Введите название"
-          id="place"
-      />
-      <span id="error-place" className="popup__error-message" />
-      <input
-          type="url"
-          required=""
-          className="popup__input popup__input_type_link"
-          name="link"
-          placeholder="Введите ссылку на картинку"
-          id="link"
-      />
-      <span id="error-link" className="popup__error-message" />
-    </PopupWithForm>
+      onClose = {closeAllPopups}
+      isLoaderMessage = {isLoaderMessage}
+      onAddPlace = {handleAddPlaceSubmit}
+    />
 
-    <PopupWithForm 
-      name = 'edit-avatar'
-      title = 'Обновоить аватар'
+    <EditAvatarPopup
       isOpen = {isEditAvatarPopupOpen}
-      onClose = {closePopupsByBtnAndOverlay}
-    >
-      <input
-          type="url"
-          required=""
-          className="popup__input popup__input_type_avatar"
-          name="avatar"
-          placeholder="Введите ссылку"
-          id="avatar"
-      />
-      <span id="error-avatar" className="popup__error-message" />
-    </PopupWithForm>
+      onClose = {closeAllPopups}
+      isLoaderMessage = {isLoaderMessage}
+      onUpdateAvatar = {handleUpdateAvatar}
+    />
 
     <PopupWithForm 
       name = 'delete'
       title = 'Вы уверены?'
       titleButton = 'Да'
+      loaderMessage = 'Удаление...'
       isOpen = {isDeletePopupOpen}
-      onClose = {closePopupsByBtnAndOverlay}
+      onClose = {closeAllPopups}
+      onSubmit = {handleDeleteSubmit}
+      isLoaderMessage = {isLoaderMessage}
     />
 
     <ImagePopup
     card = {selectedCard}
     isOpen = {isImagePopup}
-    onClose = {closePopupsByBtnAndOverlay}
+    onClose = {closeAllPopups}
     />
 
-  </div>
-</div>
-
+    </div>
+    </div>
+  </CurrentUserContext.Provider>
   );
 }
 

@@ -1,37 +1,23 @@
 import buttonEdit from '../../images/button__edit.svg'
 import buttonAdd from '../../images/button__add.svg'
-import api from '../../utils/api'
 import Card from '../Card/Card.jsx'
-import { useEffect, useState } from 'react'
+import {  useContext } from 'react'
+import CurrentUserContext from '../../contexts/CurrentUserContext'
+import Spinner from '../Spinner/Spinner.jsx'
 
-export default function Main({onEditProfile, onEditAvatar, onAddPlace, onCardClick, onDelete}) {
-  const [userName, setUserName] = useState('')
-  const [userDescription, setUserDescription] = useState('')
-  const [userAvatar, setUserAvatar] = useState('')
-  const [cards, setCards] = useState([])
-
-  useEffect(() => {
-    Promise.all([api.getInfo(), api.getCards()])
-      .then(([dataUser, dataCard]) => {
-        setUserName(dataUser.name)
-        setUserDescription(dataUser.about)
-        setUserAvatar(dataUser.avatar)
-        dataCard.forEach(data => dataUser.myid = dataUser._id)
-        setCards(dataCard)
-      })
-      .catch((error) => console.error(`Ошибка: ${error}`))
-  },[])
+export default function Main({onEditProfile, onEditAvatar, onAddPlace, onCardClick, onDelete, cards, isLoading}) {
+  const currentUser = useContext(CurrentUserContext)
 
     return (
         <main className="main">
         <section className="profile">
           <div className="profile__container">
             <button type="button" className="profile__avatar-overlay" onClick={onEditAvatar}>
-              <img src={userAvatar} alt="Фото пользователя" className="profile__photo" />
+              <img src={currentUser.avatar ? currentUser.avatar : '#'} alt="Фото пользователя" className="profile__photo" />
             </button>
             <div className="profile__info">
               <div className="profile__title">
-                <h1 className="profile__name" >{userName}</h1>
+                <h1 className="profile__name" >{currentUser.name ? currentUser.name : ''}</h1>
                 <button className="profile__edit-btn" type="button" onClick={onEditProfile}>
                   <img
                     className="profile__edit-btn-pic"
@@ -40,7 +26,7 @@ export default function Main({onEditProfile, onEditAvatar, onAddPlace, onCardCli
                   />
                 </button>
               </div>
-              <p className="profile__hobby" >{userDescription}</p>
+              <p className="profile__hobby" >{currentUser.about ? currentUser.about : ''}</p>
             </div>
           </div>
           <button className="profile__add-btn" type="button" onClick={onAddPlace}>
@@ -52,7 +38,7 @@ export default function Main({onEditProfile, onEditAvatar, onAddPlace, onCardCli
           </button>
         </section>
         <section className="photo-cards" >
-          {cards.map(data => {
+          {isLoading ? <Spinner/> : cards.map(data => {
             return (
               <article className="card" key = {data._id}>
                 <Card card={data} onCardClick = {onCardClick} onDelete={onDelete}/>

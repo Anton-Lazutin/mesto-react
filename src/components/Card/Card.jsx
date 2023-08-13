@@ -1,4 +1,9 @@
+import { useContext } from "react"
+import CurrentUserContext from '../../contexts/CurrentUserContext'
+import ButtonLike from '../ButtonLike/ButtonLike.jsx'
+
 export default function Card({card, onCardClick, onDelete}) {
+    const currentUser = useContext(CurrentUserContext)
     return (
         <article className="card">
             <img 
@@ -7,13 +12,11 @@ export default function Card({card, onCardClick, onDelete}) {
                 className="card__pic" 
                 onClick = {() => onCardClick({link: card.link, name: card.name})}
                 />
-            {/* {card.myid === card.owner._id && <button className="card__dlt-btn" type="button" onClick={onDelete}/>} */}
-            <button className="card__dlt-btn" type="button" onClick={onDelete}/>
+            {currentUser._id === card.owner._id && <button className="card__dlt-btn" type="button" onClick={() => onDelete(card._id)}/>}
             <div className="card__info">
                 <h2 className="card__title" >{card.name}</h2>
                 <div className="card__likes">
-                    <button className="card__like-btn" type="button" />
-                    <span className="card__like-nmbr">{card.likes.length}</span>
+                    <ButtonLike likes={card.likes} myId={currentUser._id} cardId={card._id}/>
                 </div>
             </div>
         </article>
