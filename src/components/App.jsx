@@ -100,7 +100,7 @@ function App() {
         setIsLoaderMessage(false)
       })
       .catch((error) => console.error(`Ошибка: ${error}`))
-      .finnaly(() => setIsLoaderMessage(false))
+      .finally(() => setIsLoaderMessage(false))
   }
 
   function handleUpdateUser(dataUser, reset) {
@@ -113,7 +113,7 @@ function App() {
         setIsLoaderMessage(false)
       })
       .catch((error) => console.error(`Ошибка: ${error}`))
-      .finnaly(() => setIsLoaderMessage(false))
+      .finally(() => setIsLoaderMessage(false))
   } 
 
   function handleUpdateAvatar(dataUser, reset) {
@@ -126,7 +126,7 @@ function App() {
         setIsLoaderMessage(false)
       })
       .catch((error) => console.error(`Ошибка: ${error}`))
-      .finnaly(() => setIsLoaderMessage(false))
+      .finally(() => setIsLoaderMessage(false))
   }
 
   function handleAddPlaceSubmit(dataCard, reset) {
@@ -139,7 +139,7 @@ function App() {
         setIsLoaderMessage(false)
       })
       .catch((error) => console.error(`Ошибка: ${error}`))
-      .finnaly(() => setIsLoaderMessage(false))
+      .finally(() => setIsLoaderMessage(false))
   }
 
   return (

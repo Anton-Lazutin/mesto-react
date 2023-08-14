@@ -16,7 +16,6 @@ class Api {
         }
         })
         .then(this._checkResponse)
-        .catch((error) => console.error(`Ошибка: ${error}`))
     }
 
     getCards() {
@@ -26,7 +25,6 @@ class Api {
         }
         })
         .then(this._checkResponse)
-        .catch((error) => console.error(`Ошибка: ${error}`))
     }
 
     setUserInfo(data) {
@@ -39,7 +37,6 @@ class Api {
         })
         })
         .then(this._checkResponse)
-        .catch((error) => console.error(`Ошибка: ${error}`))
     }
 
     setUserAvatar(data) {
@@ -51,7 +48,6 @@ class Api {
         })
         })
         .then(this._checkResponse)
-        .catch((error) => console.error(`Ошибка: ${error}`))
     }
 
     addCard(data) {
@@ -64,7 +60,6 @@ class Api {
         })
         })
         .then(this._checkResponse)
-        .catch((error) => console.error(`Ошибка: ${error}`))
     }
 
     addLike(cardId) {
@@ -75,7 +70,6 @@ class Api {
         }
         })
         .then(this._checkResponse)
-        .catch((error) => console.error(`Ошибка: ${error}`))
     }
 
     deleteLike(cardId) {
@@ -86,7 +80,6 @@ class Api {
         }
         })
         .then(this._checkResponse)
-        .catch((error) => console.error(`Ошибка: ${error}`))
     }
 
     deleteCard(cardId) {
@@ -97,7 +90,6 @@ class Api {
         }
         })
         .then(this._checkResponse)
-        .catch((error) => console.error(`Ошибка: ${error}`))
         }
     }
 
