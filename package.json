@@ -38,6 +38,11 @@
     ]
   },
   "devDependencies": {
+    "webpack": "^5.88.2",
     "gh-pages": "^6.0.0"
-  }
+  },
+  "description": "Проект \"Mesto-react\" - веб-сервис, куда можно добавлять фотографии, удалять их и ставить лайки (некоторый функционал еще в разработке). Инструменты и стек: HTML CSS JS Webpack GitHubPages API React",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC"
 }
